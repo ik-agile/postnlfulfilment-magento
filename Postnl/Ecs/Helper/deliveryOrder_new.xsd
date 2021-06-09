@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		targetNamespace="http://www.toppak.nl/deliveryorder_new" xmlns="http://www.toppak.nl/deliveryorder_new"
+		elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:include schemaLocation="simpleTypes.xsd"/>
+
+	<xsd:element name="message">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="type" type="xsd:string" fixed="deliveryOrder"/>
+				<xsd:element name="messageNo" type="string255" minOccurs="0"/>
+				<xsd:element name="date" type="xsd:date" minOccurs="0"/>
+				<xsd:element name="time" type="time" minOccurs="0"/>
+				<xsd:choice>
+					<xsd:element name="deliveryOrders" type="deliveryOrdersType"/>
+					<xsd:element name="deliveryOrder" type="deliveryOrderType" maxOccurs="unbounded"/>
+				</xsd:choice>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="deliveryOrdersType">
+		<xsd:sequence>
+			<xsd:element name="deliveryOrder" type="deliveryOrderType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="deliveryOrderType">
+		<xsd:sequence>
+			<xsd:element name="orderNo" type="string10"/>
+			<xsd:element name="webOrderNo" type="string10" minOccurs="0"/>
+			<xsd:element name="orderDate" type="xsd:date"/>
+			<xsd:element name="orderTime" type="time" minOccurs="0"/>
+			<xsd:element name="orderType" type="xsd:token" minOccurs="0" nillable="true"/>
+			<xsd:element name="customerNo" type="string40" minOccurs="0" nillable="true"/>
+			<xsd:element name="onlyHomeAddress" type="xsd:boolean" minOccurs="0"/>
+			<xsd:element name="vendorNo" type="xsd:token" minOccurs="0" nillable="true"/>
+			<xsd:element name="salesChannel" type="string30" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToContact" type="xsd:token" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToTitle" type="string10" minOccurs="0"/>
+			<xsd:element name="shipToFirstName" type="string35" minOccurs="0"/>
+			<xsd:element name="shipToLastName" type="string35"/>
+			<xsd:element name="shipToCompanyName" type="string35" minOccurs="0"/>
+			<xsd:element name="shipToBuildingName" type="string35" minOccurs="0"/>
+			<xsd:element name="shipToDepartment" type="string35" minOccurs="0"/>
+			<xsd:element name="shipToFloor" type="string35" minOccurs="0"/>
+			<xsd:element name="shipToDoorcode" type="string35" minOccurs="0"/>
+			<xsd:element name="shipToStreet" type="string95" minOccurs="0"/>
+			<xsd:element name="shipToHouseNo" type="string5" minOccurs="0"/>
+			<xsd:element name="shipToAnnex" type="string35" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToPostalCode" type="string10"/>
+			<xsd:element name="shipToCity" type="string30"/>
+			<xsd:element name="shipToProvincie" type="xsd:token" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToCountryCode" type="string2"/>
+			<xsd:element name="shipToCountry" type="string30" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToPhone" type="string17" minOccurs="0"/>
+			<xsd:element name="shipToStreetHouseNrExt" type="string100" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToArea" type="string35" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToRegion" type="string35" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToRemark" type="string35" minOccurs="0" nillable="true"/>
+			<xsd:element name="shipToEmail" type="string50" minOccurs="0" nillable="true"/>
+
+			<xsd:element name="telephone" type="string20" minOccurs="0" nillable="true"/>
+			<xsd:element name="telephone2" type="string20" minOccurs="0" nillable="true"/>
+			
+			<xsd:group ref="invoiceTo" minOccurs="0"/>
+			
+			<xsd:element name="language" type="string2" minOccurs="0"/>
+			<xsd:element name="remboursAmount" type="xsd:decimal" minOccurs="0"/>
+			<xsd:element name="insuredValue" type="xsd:decimal" minOccurs="0"/>
+			<xsd:element name="shippingCosts" type="xsd:decimal" minOccurs="0"/>
+			<xsd:element name="orderGrandTotal" type="xsd:decimal" minOccurs="0"/>
+			<xsd:element name="feeTax" type="xsd:decimal" minOccurs="0"/>
+			<xsd:element name="barCode" type="string15" minOccurs="0"/>
+			<xsd:element name="downPartnerBarCode" type="string35" minOccurs="0"/>
+			<xsd:element name="shippingAgentCode" type="string255"/>
+			<xsd:element name="shipmentType" type="string35" minOccurs="0"/>
+			<xsd:element name="shipmentProductOption" type="string10" minOccurs="0"/>
+			<xsd:element name="shipmentOption" type="string10" minOccurs="0"/>
+			<xsd:element name="deliveryTimeStampStart" type="xsd:dateTime" minOccurs="0"/>
+			<xsd:element name="deliveryTimeStampEnd" type="xsd:dateTime" minOccurs="0"/>			
+			<xsd:element name="packingInstructionCode" type="string3" minOccurs="0"/>
+			<xsd:element name="packingInstructionText" type="string70" minOccurs="0"/>
+			<xsd:element name="receiverDateOfBirth" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="IDExpiration" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="IDNumber" type="string20" minOccurs="0"/>
+			<xsd:element name="IDType" type="string2" minOccurs="0"/>
+			<xsd:element name="shippingWeight" type="integer6" minOccurs="0"/>
+			<xsd:element name="shippingLetterSku" type="string10" minOccurs="0"/>
+			<xsd:element name="shippingCartonSku" type="string10" minOccurs="0"/>
+			<xsd:element name="servicePointCode" type="xsd:string" minOccurs="0" nillable="true"/>
+			<xsd:element name="requestedDeliveryDate" type="xsd:date" minOccurs="0" nillable="true"/>
+			<xsd:element name="requestedDeliveryTime" type="time" minOccurs="0" nillable="true"/>
+			<xsd:element name="wrapCode" type="string2" minOccurs="0" nillable="true"/>
+			<xsd:element name="comment" type="string255" minOccurs="0" nillable="true"/>
+			<xsd:element name="comment2" type="string80" minOccurs="0" nillable="true"/>
+			<xsd:element name="comment3" type="string80" minOccurs="0" nillable="true"/>
+			<xsd:element name="comment4" type="string80" minOccurs="0" nillable="true"/>
+			<xsd:element name="comment5" type="string80" minOccurs="0" nillable="true"/>
+			<xsd:element name="deliveryOrderLines" type="deliveryOrderLinesType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="deliveryOrderLinesType">
+		<xsd:sequence>
+			<xsd:element name="deliveryOrderLine" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="itemNo" type="string24"/>
+						<xsd:element name="itemDescription" type="string255" minOccurs="0"/>
+						<xsd:element name="eanNo" type="string15" minOccurs="0" nillable="true"/>
+						<xsd:element name="quantity" type="integer5"/>
+						<xsd:element name="singlePriceInclTax" type="xsd:decimal" minOccurs="0"/>
+						<xsd:element name="wrapQuantity" type="integer5" minOccurs="0" nillable="true"/>
+						<xsd:element name="wrapPaperCode" type="string5" minOccurs="0" nillable="true"/>
+						<xsd:element name="Description01" type="xsd:token" minOccurs="0" nillable="true"/>
+						<xsd:element name="Description02" type="xsd:token" minOccurs="0" nillable="true"/>
+						<xsd:element name="GiftWrap" type="integer5" minOccurs="0" nillable="true"/>
+						<xsd:element name="GiftCardInstruction" type="string255" minOccurs="0" nillable="true"/>
+						<xsd:element name="KivNumber" type="xsd:token" minOccurs="0"/>						
+						<xsd:element name="componentProducts" type="componentProductsType" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="componentProductsType">
+		<xsd:sequence>
+			<xsd:element name="componentProduct" minOccurs="2" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="productCode" type="string30"/>
+						<xsd:element name="description" type="xsd:string"/>
+						<xsd:element name="eanNo" type="string18"/>
+						<xsd:element name="quantity" type="integer5"/>
+						<xsd:element name="wrapQuantity" type="integer5" minOccurs="0" nillable="true"/>
+						<xsd:element name="wrapPaperCode" type="string5" minOccurs="0" nillable="true"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:group name="invoiceTo">
+		<xsd:sequence>
+			<xsd:element name="invoiceToTitle" type="string10" minOccurs="0"/>
+			<xsd:element name="invoiceToFirstName" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToLastName" type="string35"/>
+			<xsd:element name="invoiceToCompanyName" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToBuildingName" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToDepartment" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToFloor" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToDoorcode" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToStreet" type="string95" minOccurs="0"/>
+			<xsd:element name="invoiceToHouseNo" type="string5" minOccurs="0"/>
+			<xsd:element name="invoiceToAnnex" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToPostalCode" type="string10"/>
+			<xsd:element name="invoiceToCity" type="string30"/>
+			<xsd:element name="invoiceToCountryCode" type="string2"/>
+			<xsd:element name="invoiceToCountry" type="string30" minOccurs="0"/>
+			<xsd:element name="invoiceToPhone" type="string17" minOccurs="0"/>
+			<xsd:element name="invoiceToStreetHouseNrExt" type="string100" minOccurs="0"/>
+			<xsd:element name="invoiceToArea" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToRegion" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToRemark" type="string35" minOccurs="0"/>
+			<xsd:element name="invoiceToEmail" type="string50" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:group>
+
+</xsd:schema>

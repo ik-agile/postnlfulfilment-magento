@@ -1,0 +1,17 @@
+Release 0.7: - 03-05-2021
+1. Export order address in streetHouseNrExt tag of XML
+
+Release 0.6: - 28-04-2021
+1. Compatibility with Magento 2.4.1
+2. Max orders per file configuration
+
+
+Release 0.5: - 17-04-2019
+New:
+1. Validate Order and Product xml with XSD
+2. XML will not contain any empty fields
+3. Remove trigger on catalog stock table, so that it does not update the products on stock update.
+
+Fixes:
+1: Delete already processed shipment, stock files from server
+2: Exclude additional symbols from product for product name and description fields which can cause XML to break.

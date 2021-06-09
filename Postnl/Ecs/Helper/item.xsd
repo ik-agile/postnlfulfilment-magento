@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		targetNamespace="http://www.toppak.nl/item" xmlns="http://www.toppak.nl/item"
+		elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:include schemaLocation="simpleTypes.xsd"/>
+
+	<xsd:element name="message">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="type" type="xsd:string" default="item"/>
+				<xsd:element name="messageNo" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="date" type="xsd:date" minOccurs="0"/>
+				<xsd:element name="time" type="time" minOccurs="0"/>
+				<xsd:element name="items" type="itemsType"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="itemsType">
+		<xsd:sequence>
+			<xsd:element name="item" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="itemNo" type="string24"/>
+						<xsd:element name="description" type="xsd:string"/>
+						<xsd:element name="description2" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="baseUnitOfMeasure" type="xsd:token" minOccurs="0"/>
+						<xsd:element name="purchUnitOfMeasure" type="xsd:token" minOccurs="0"/>
+						<xsd:element name="unitMeasure" type="xsd:token" minOccurs="0"/>
+						<xsd:element name="unitOfMeasure" type="xsd:token" minOccurs="0"/>
+						<xsd:element name="height" type="xsd:nonNegativeInteger"/>
+						<xsd:element name="width" type="xsd:nonNegativeInteger"/>
+						<xsd:element name="depth" type="xsd:nonNegativeInteger"/>
+						<xsd:element name="weight" type="decimal3" minOccurs="0"/>
+						<xsd:element name="vendorItemNo" type="xsd:token" minOccurs="0"/>
+						<xsd:element name="itemStatus" type="xsd:token" minOccurs="0"/>
+						<xsd:element name="eanNo" type="string15" maxOccurs="unbounded"/>
+						<xsd:element name="hsTariffNr" type="string6" minOccurs="0"/>
+						<xsd:element name="productURL" type="string200" minOccurs="0"/>
+						<xsd:element name="bac" type="string1" minOccurs="0"/>
+						<xsd:element name="productGroup" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="validFrom" type="xsd:date" minOccurs="0"/>
+						<xsd:element name="validTo" type="xsd:date" minOccurs="0"/>
+						<xsd:element name="expiry" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="adr" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="active" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="lot" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="sortOrder" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="minStock" type="xsd:integer" minOccurs="0"/>
+						<xsd:element name="maxStock" type="xsd:integer" minOccurs="0"/>
+						<xsd:element name="retailPrice" type="xsd:decimal" minOccurs="0"/>
+						<xsd:element name="purchasePrice" type="xsd:decimal" minOccurs="0"/>
+						<xsd:element name="productType" type="xsd:string" minOccurs="0"/>
+						<xsd:element name="defaultMasterProduct" type="xsd:boolean" minOccurs="0"/>
+						<xsd:element name="hangingStorage" type="xsd:boolean" minOccurs="0"/>
+						<xsd:element name="backOrder" type="xsd:boolean" minOccurs="0"/>
+						<xsd:element name="enriched" type="xsd:boolean" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

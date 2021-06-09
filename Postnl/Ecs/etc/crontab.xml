@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="postnlecs_product" instance="Postnl\Ecs\Cron\Product" method="execute">
+            <config_path>ecs/product/expr</config_path>
+        </job>
+        <job name="postnlecs_order" instance="Postnl\Ecs\Cron\Order" method="execute">
+            <config_path>ecs/order/expr</config_path>
+        </job>
+        <job name="postnlecs_shipment" instance="Postnl\Ecs\Cron\Shipment" method="execute">
+            <config_path>ecs/shipment/expr</config_path>
+        </job>
+        <job name="postnlecs_stock" instance="Postnl\Ecs\Cron\Stock" method="execute">
+            <config_path>ecs/stock/expr</config_path>
+        </job>
+    </group>
+</config>

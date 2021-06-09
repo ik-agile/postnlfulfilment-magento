@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="admin.postnl.ecs.grid.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="adminhtml.postnl.ecs.orders.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">postnl_ecs_order_grid</argument>
+                    <argument name="dataSource" xsi:type="object">Postnl\Ecs\Model\Resource\Order\Row\Collection</argument>
+                    <argument name="default_sort" xsi:type="string">order_row_id</argument>
+                    <argument name="default_dir" xsi:type="string">DESC</argument>
+                    <argument name="save_parameters_in_session" xsi:type="boolean">true</argument>
+                    <argument name="use_ajax" xsi:type="boolean">true</argument>
+                    <argument name="grid_url" xsi:type="url" path="*/*/grid">
+                    <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\Export" name="adminhtml.postnl.ecs.grid.export" as="grid.export">
+                    <arguments>
+                        <argument name="exportTypes" xsi:type="array">
+                            <item name="csv" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/export</item>
+                                <item name="label" xsi:type="string" translate="true">CSV</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" as="grid.columnSet" name="adminhtml.postnl.ecs.grid.columnSet">
+                    <arguments>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string">#</item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="order_row_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">ID</argument>
+                            <argument name="index" xsi:type="string">order_row_id</argument>
+                            <argument name="column_css_class" xsi:type="string">col-id</argument>
+                            <argument name="header_css_class" xsi:type="string">col-id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="filename">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Filename</argument>
+                            <argument name="index" xsi:type="string">filename</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="increment_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Order #</argument>
+                            <argument name="index" xsi:type="string">increment_id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="updated_at">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Date</argument>
+                            <argument name="index" xsi:type="string">updated_at</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>
+

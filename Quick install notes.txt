@@ -1,0 +1,14 @@
+Magento 2 install PostNL ECS extension using the COMMAND LINE 
+
+Step 1: Request the extension from PostNL
+
+Step 2: Unzip the file in a temporary directory
+
+Step 3: Upload it to your Magento installation root directory
+
+Step 4: Disable the cache under System­ >> Cache Management
+
+Step 5: Enter the following at the command line:
+php bin/magento setup:upgrade
+
+Step 6: After opening Stores­ >>Configuration >­>Advanced >­> Advanced, the module will be shown in the admin panel

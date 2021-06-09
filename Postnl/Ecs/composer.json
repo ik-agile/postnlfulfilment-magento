@@ -1,0 +1,19 @@
+{
+  "name": "Postnl/Ecs",
+  "description": "PostNL ECS",
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0.0",
+    "magento/magento-composer-installer": "*"
+  },
+  "type": "magento2-module",
+  "version": "0.7.1",
+  "license": [
+    "Private"
+  ],
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": {
+      "Postnl\\Ecs\\": ""
+    }
+  }
+}

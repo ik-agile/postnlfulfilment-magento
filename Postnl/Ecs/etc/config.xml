@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <ecs>
+            <general>
+                <enabled>0</enabled>
+                <retailer_name/>
+                <email/>
+                <address_1>Street</address_1>
+                <address_2>HouseNo</address_2>
+                <address_3>Annex</address_3>
+            </general>
+            <server>
+                <hostname/>
+                <port/>
+                <username/>
+                <key/>
+                <key_password/>
+            </server>
+            <product>
+                <enabled>0</enabled>
+                <path/>
+                <expr>0 * * * *</expr>
+            </product>
+            <order>
+                <enabled>0</enabled>
+                <path/>
+				<ordersfile>1</ordersfile>
+                <status>processing</status>
+                <method/>
+                <expr>0 * * * *</expr>
+            </order>
+            <shipment>
+                <enabled>0</enabled>
+                <path/>
+                <inform_customer>1</inform_customer>
+                <expr>15 * * * *</expr>
+            </shipment>
+            <stock>
+                <enabled>0</enabled>
+                <path/>
+                <expr>30 * * * *</expr>
+            </stock>
+        </ecs>
+    </default>
+</config>

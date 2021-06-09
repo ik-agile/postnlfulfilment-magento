@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="postnl" translate="label" sortOrder="999999" class="postnl-tab">
+            <label>PostNL</label>
+        </tab>
+        <section id="ecs" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+            <resource>Postnl_Ecs::config_ecs</resource>
+            <label>ECS</label>
+            <tab>postnl</tab>
+            <group id="general" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
+                <label>General</label>
+                <field id="enabled" translate="label" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="10">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="retailer_name" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+                    <label>Retailer Name</label>
+                </field>
+                <field id="email" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="30">
+                    <label>Admin Email</label>
+                    <comment>You will receive letters about any errors occured</comment>
+                    <validate>validate-email</validate>
+                </field>
+                <field id="address_1" translate="label comment" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="40">
+                    <label>Address Line #1</label>
+                    <source_model>Postnl\Ecs\Model\System\Config\Source\Address</source_model>
+                </field>
+                <field id="address_2" translate="label comment" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="50">
+                    <label>Address Line #2</label>
+                    <source_model>Postnl\Ecs\Model\System\Config\Source\Address</source_model>
+                </field>
+                <field id="address_3" translate="label comment" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="60">
+                    <label>Address Line #3</label>
+                    <source_model>Postnl\Ecs\Model\System\Config\Source\Address</source_model>
+                </field>
+            </group>
+            <group id="server" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
+                <label>SFTP Server Settings</label>
+                <field id="hostname" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="10">
+                    <label>Hostname</label>
+                    <comment>For example, test.example.com or 192.168.1.1</comment>
+                </field>
+                <field id="port" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+                    <label>Port</label>
+                    <comment>Leave empty for default (22)</comment>
+                    <validate>validate-number</validate>
+                </field>
+                <field id="username" translate="label" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="30">
+                    <label>Username</label>
+                </field>
+                <field id="key" translate="label comment" type="textarea" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="40">
+                    <label>Key</label>
+                    <comment>PPK and PKCS formats are supported</comment>
+                </field>
+                <field id="key_password" translate="label comment" type="password" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="50">
+                    <label>Key Password</label>
+                    <comment>Optional</comment>
+                </field>
+            </group>
+            <group id="product" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
+                <label>Products Export</label>
+                <field id="enabled" translate="label" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="10">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="path" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+                    <label>Path</label>
+                    <comment>For example, /magento/products</comment>
+                </field>
+                <field id="expr" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="30">
+                    <label>Cron Expression</label>
+                </field>
+                <field id="latest" translate="label" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="40">
+                    <label>Last Processed File</label>
+                    <frontend_model>Postnl\Ecs\Block\Adminhtml\System\Config\Last\Product</frontend_model>
+                </field>
+            </group>
+            <group id="order" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
+                <label>Order Export</label>
+                <field id="enabled" translate="label" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="10">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="path" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+                    <label>Path</label>
+                    <comment>For example, /magento/orders</comment>
+                </field>
+				<field id="ordersfile" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+                    <label>Max Orders in file</label>
+                    <comment>For example, 1</comment>
+					<validate>validate-number</validate>
+                </field>
+                <field id="status" translate="label comment" type="multiselect" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="30">
+                    <label>Order Status</label>
+                    <comment>Only orders with selected status(es) will be exported</comment>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                </field>
+                <field id="method" translate="label comment" type="multiselect" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="40">
+                    <label>Shipping Method</label>
+                    <comment>Only orders with selected method(s) will be exported</comment>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allmethods</source_model>
+                </field>
+                <field id="expr" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="50">
+                    <label>Cron Expression</label>
+                </field>
+                <field id="latest" translate="label" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="60">
+                    <label>Last Processed File</label>
+                    <frontend_model>Postnl\Ecs\Block\Adminhtml\System\Config\Last\Order</frontend_model>
+                </field>
+            </group>
+            <group id="shipment" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
+                <label>Shipment Import</label>
+                <field id="enabled" translate="label" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="10">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="path" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+                    <label>Path</label>
+                    <comment>For example, /magento/shipments</comment>
+                </field>
+                <field id="inform_customer" translate="label" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="30">
+                    <label>Inform Customer</label>
+                    <comment>Standard order shipment email will be sent to customer</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="expr" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="40">
+                    <label>Cron Expression</label>
+                </field>
+                <field id="latest" translate="label" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="50">
+                    <label>Last Processed File</label>
+                    <frontend_model>Postnl\Ecs\Block\Adminhtml\System\Config\Last\Shipment</frontend_model>
+                </field>
+            </group>
+            <group id="stock" type="select" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" translate="label">
+                <label>Inventory Import</label>
+                <field id="enabled" translate="label" type="select" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="10">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="path" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+                    <label>Path</label>
+                    <comment>For example, /magento/inventory</comment>
+                </field>
+                <field id="expr" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="30">
+                    <label>Cron Expression</label>
+                </field>
+                <field id="latest" translate="label" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="40">
+                    <label>Last Processed File</label>
+                    <frontend_model>Postnl\Ecs\Block\Adminhtml\System\Config\Last\Stock</frontend_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
