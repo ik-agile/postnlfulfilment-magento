@@ -3,9 +3,9 @@ namespace Postnl\Ecs\Model\Processor;
 
 
 class Shipment extends Common {
-    
+
     const MAX_FILES_TO_PROCESS = 1000;
-    
+
     protected $_orders = array();
 
     /**
@@ -42,16 +42,31 @@ class Shipment extends Common {
      * @var \Magento\Framework\DB\TransactionFactory
      */
     protected $transactionFactory;
-    
+
     /**
      * @var \Magento\Sales\Model\Order\ShipmentFactory
      */
     protected $shipmentFactory;
-    
+
     /**
      * @var \Magento\Sales\Model\Order\Email\Sender\ShipmentSender
      */
     protected $shipmentSender;
+
+    /**
+     * @var \Magento\Sales\Model\Order\CreditmemoFactory
+     */
+    protected $creditmemoFactory;
+
+    /**
+     * @var \Magento\Sales\Model\Service\CreditmemoService
+     */
+    protected $creditmemoService;
+
+    /**
+     * @var \Magento\\Sales\Model\Order\Invoice
+     */
+    protected $invoice;
 
     public function __construct(
         \Magento\Framework\Filesystem\Io\Sftp $sftp,
@@ -63,7 +78,10 @@ class Shipment extends Common {
         \Magento\Sales\Model\Order\Shipment\TrackFactory $salesOrderShipmentTrackFactory,
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Magento\Sales\Model\Order\ShipmentFactory $shipmentFactory,
-        \Magento\Sales\Model\Order\Email\Sender\ShipmentSender $shipmentSender
+        \Magento\Sales\Model\Order\Email\Sender\ShipmentSender $shipmentSender,
+        \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory,
+        \Magento\Sales\Model\Order\Invoice $invoice,
+        \Magento\Sales\Model\Service\CreditmemoService $creditmemoService
     ) {
         $this->ecsConfigHelper = $ecsConfigHelper;
         $this->ecsShipment = $ecsShipment;
@@ -74,37 +92,40 @@ class Shipment extends Common {
         $this->transactionFactory = $transactionFactory;
         $this->shipmentFactory = $shipmentFactory;
         $this->shipmentSender = $shipmentSender;
+        $this->creditmemoFactory = $creditmemoFactory;
+        $this->creditmemoService = $creditmemoService;
+        $this->invoice = $invoice;
         parent::__construct(func_get_args());
     }
-    
+
     public function isEnabled()
     {
         return $this->ecsConfigHelper->getIsShipmentEnabled();
     }
-    
+
     public function getPath()
     {
         return $this->ecsConfigHelper->getShipmentPath();
     }
-    
+
     public function checkPath()
     {
         $path = $this->getPath();
         if (empty($path))
             throw new \Postnl\Ecs\Exception(__('Shipment path is empty', $path));
-            
+
         $result = $this->_server->cd($path);
         if ( ! $result)
             throw new \Postnl\Ecs\Exception(__('Folder "%1" is missing', $path));
     }
-    
+
     protected function _getAllFiles()
     {
         $this->checkPath();
         $result = $this->_filterFiles($this->_server->ls(), '#.+\.xml$#D');
         return $result;
     }
-    
+
     public function getFiles()
     {
         $files = $this->_getAllFiles();
@@ -113,14 +134,14 @@ class Shipment extends Common {
                 array(),
                 array()
             );
-        
+
         $unprocessed = $this->ecsShipment->getUnprocessed($files);
         return array(
             array_slice($unprocessed, 0, self::MAX_FILES_TO_PROCESS),
             $this->ecsShipment->getAlreadyProcessed($files)
         );
     }
-    
+
     protected function _getFile($filename)
     {
         $file = $this->ecsShipmentFactory->create()->load($filename, 'filename');
@@ -132,22 +153,22 @@ class Shipment extends Common {
         $file->save();
         return $file;
     }
-    
+
     protected function _getData(\Postnl\Ecs\Model\Shipment $file)
     {
         $filename = $file->getFilename();
         $contents = $this->_server->read($filename);
-		
+
         if ($contents === false)
             throw new \Postnl\Ecs\Exception(__('Can not read file "%1"', $filename));
-        
+
         $xml = @simplexml_load_string($contents);
         if ($xml === false)
             throw new \Postnl\Ecs\Exception(__('Invalid XML found in "%1"', $filename));
-        
+
         if (isset($xml->messageNo))
             $file->setMessageNumber((string) $xml->messageNo);
-        
+
         if (isset($xml->retailerName))
         {
             $retailerName = (string) $xml->retailerName;
@@ -155,11 +176,11 @@ class Shipment extends Common {
             if ( ! empty($configRetailerName) && $retailerName != $configRetailerName)
                 throw new \Postnl\Ecs\Exception(__('File "%1" is skipped because of Retailer Name mismatch', $filename));
         }
-        
+
         $result = array();
         if ( ! isset($xml->orderStatus))
             return $result;
-        
+
         foreach ($xml->orderStatus as $status)
         {
             $row = $this->ecsShipmentRowFactory->create();
@@ -167,10 +188,10 @@ class Shipment extends Common {
             if (isset($status->orderStatusLines))
                 foreach ($status->orderStatusLines->orderStatusLine as $line)
                     $items[(string) $line->itemNo] = (string) $line->quantity;
-                    
+
             if ( ! count($items))
                 throw new \Postnl\Ecs\Exception(__('It seems, that shipping message "%1" was already processed.', $filename));
-                    
+
             $row->setData(array(
                 'shipment_id' => $file->getId(),
                 'status' => \Postnl\Ecs\Model\Shipment\Row::STATUS_PENDING,
@@ -183,7 +204,7 @@ class Shipment extends Common {
         }
         return $result;
     }
-    
+
     public function parseFile($filename)
     {
         $file = $this->_getFile($filename);
@@ -197,7 +218,7 @@ class Shipment extends Common {
         }
         return array($file, $data);
     }
-    
+
     protected function _getOrder($orderId)
     {
         if ( ! isset($this->_orders[$orderId]))
@@ -206,90 +227,105 @@ class Shipment extends Common {
         }
         return $this->_orders[$orderId];
     }
-    
+
     public function processRow(\Postnl\Ecs\Model\Shipment\Row $row)
     {
-		
-		try {
+
+        try {
             $order = $this->_getOrder($row->getOrderId());
             if ( ! $order || ! $order->getId())
                 throw new \Postnl\Ecs\Exception(__(
-                    'Unknown order number "%1" in file "%2"', 
+                    'Unknown order number "%1" in file "%2"',
                     $row->getOrderId(),
                     $row->getShipment()->getFilename()
                 ));
-            
-            
+
+
             $qtys = array();
             $data = $row->getItems();
-			$itemCount = 0;
-			$cancelCount = 0;
-			
+            $itemCount = 0;
+            $cancelCount = 0;
+
             foreach ($order->getItemsCollection() as $item)
             {
                 if ($item->isDummy(true))
                     continue;
                 $itemCount += 1;
                 $sku = $item->getSku();
-			
-				
-				
-				
+
+
+
+
                 if (isset($data[$sku]) && $data[$sku] > 0)
                 {
                     if ( ! isset($qtys[$item->getId()]))
                         $qtys[$item->getId()] = 0;
-						
+
                     $qtyToShip = min($item->getQtyToShip(), $data[$sku]);
                     if ( ! $qtyToShip)
                         continue;
-                    
+
                     $qtys[$item->getId()] += $qtyToShip;
                     $data[$sku] -= $qtyToShip;
                 } else {
-					if(isset($data[$sku])) {
+                    if(isset($data[$sku])) {
                         if ( $data[$sku] == 0 && $item->getQtyToShip() > 0) {
-						
+
                             $cancelCount += 1;
                         }
                     }
                     else
-                         $cancelCount += 1;
-				}
-				
-				
-				
+                        $cancelCount += 1;
+                }
+
+
+
             }
-			
-				
+
+
             if ( ! count($qtys)) {
                 /*throw new \Postnl\Ecs\Exception(__(
-                    'No suitable items found for shipping order "%1" in file "%2"', 
+                    'No suitable items found for shipping order "%1" in file "%2"',
                     $row->getOrderId(),
                     $row->getShipment()->getFilename()
                 ));*/
                 //Qty to Ship is 0 So cancel order.
-				
-				if ($cancelCount == $itemCount ) {
-					
-					$order->registerCancellation('Shipment is 0', true)->save();
-					
-					 
 
-					$row->setStatus(\Postnl\Ecs\Model\Shipment\Row::STATUS_PROCESSED);
-					return array($order, NULL);
-					
-				} else { 
-                    
+                if ($cancelCount == $itemCount ) {
+
+                    $invoices = $order->getInvoiceCollection();
+                    foreach ($invoices as $invoice) {
+                        $invoiceincrementid = $invoice->getIncrementId();
+                    }
+
+                    if(isset($invoiceincrementid)) {
+                        $invoiceobj = $this->invoice->loadByIncrementId($invoiceincrementid);
+                        $creditmemo = $this->creditmemoFactory->createByOrder($order);
+
+                        // Offline refund
+                        $creditmemo->setInvoice($invoiceobj);
+
+                        $this->creditmemoService->refund($creditmemo);
+                    }
+
+                    $order->registerCancellation('Shipment is 0', true)->save();
+
+
+
                     $row->setStatus(\Postnl\Ecs\Model\Shipment\Row::STATUS_PROCESSED);
-					return array($order, NULL);
+                    return array($order, NULL);
+
+                } else {
+
+                    $row->setStatus(\Postnl\Ecs\Model\Shipment\Row::STATUS_PROCESSED);
+                    return array($order, NULL);
                     /*	throw new \Postnl\Ecs\Exception(__(
 						'No suitable items found for shipping order "%1" in file "%2"', 
 						$row->getOrderId(),
 						$row->getShipment()->getFilename()
 					));*/
-				}
-			}
+                }
+            }
             $shipment = $this->shipmentFactory->create(
                 $order,
                 $qtys, [[
@@ -299,11 +335,11 @@ class Shipment extends Common {
                     'order_id' => $order->getId(),
                 ]]
             );
-            
-            
-			
-				
-			
+
+
+
+
+
             if (!$shipment->getTotalQty()) {
                 $row->setStatus(\Postnl\Ecs\Model\Shipment\Row::STATUS_PROCESSED);
                 return array($order, NULL);
@@ -314,19 +350,19 @@ class Shipment extends Common {
                 ));*/
 
             }
-                
+
 
             $shipment->register();
-			if ( $itemCount == count($qtys)) {
-			//complete order
-			
-				
-				$order->setState(\Magento\Sales\Model\Order::STATE_COMPLETE, true)->setStatus(\Magento\Sales\Model\Order::STATE_COMPLETE);
-				$order->save();
-			
-			
-			}
-            
+            if ( $itemCount == count($qtys)) {
+                //complete order
+
+
+                $order->setState(\Magento\Sales\Model\Order::STATE_COMPLETE, true)->setStatus(\Magento\Sales\Model\Order::STATE_COMPLETE);
+                $order->save();
+
+
+            }
+
             $row->setStatus(\Postnl\Ecs\Model\Shipment\Row::STATUS_PROCESSED);
             return array($order, $shipment);
         } catch (Postnl_Ecs_Exception $e) {
@@ -335,13 +371,13 @@ class Shipment extends Common {
         } catch (Exception $e) {
             $row->setStatus(\Postnl\Ecs\Model\Shipment\Row::STATUS_ERROR);
             throw new \Postnl\Ecs\Exception(__(
-                'File "%1": %2', 
+                'File "%1": %2',
                 $row->getShipment()->getFilename(),
                 $e->getMessage()
             ));
         }
     }
-    
+
     public function completeFile(\Postnl\Ecs\Model\Shipment $file, $rows, $orders, $shipments)
     {
         $file->setStatus(\Postnl\Ecs\Model\Shipment::STATUS_PROCESSED);
@@ -351,14 +387,14 @@ class Shipment extends Common {
             $transaction->addObject($row);
         foreach ($orders as $order)
             $transaction->addObject($order);
-       
+
         if(!empty($shipments)) {
             foreach ($shipments as $shipment)
                 $transaction->addObject($shipment);
         }
-            
+
         $transaction->save();
-        
+
         if(!empty($shipments)) {
             if ($this->ecsConfigHelper->getShipmentInform()) {
 
@@ -369,20 +405,20 @@ class Shipment extends Common {
                             $this->shipmentSender->send($shipment, true);
                     }
                 }
-                
+
 
             }
-               
-        
-            
+
+
+
 
         }
-        
-			
+
+
         $filename = $file->getFilename();
         $result = $this->_server->rm($this->_server->pwd() . '/' . $filename);
         if ( ! $result)
             throw new \Postnl\Ecs\Exception(__('Can not remove file "%1"', $filename));
     }
-    
+
 }

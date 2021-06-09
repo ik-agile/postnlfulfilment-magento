@@ -1,3 +1,6 @@
+Release 0.7.2: - 09-06-2021
+1. Modify cancellation if all order items have 0 as shipped. Create credit memo and close the order.
+
 Release 0.7: - 03-05-2021
 1. Export order address in streetHouseNrExt tag of XML
 

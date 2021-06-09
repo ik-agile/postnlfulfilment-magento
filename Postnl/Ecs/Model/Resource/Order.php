@@ -5,7 +5,7 @@ namespace Postnl\Ecs\Model\Resource;
 class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     
-    const MAX_ORDERS = 100;
+    const MAX_ORDERS = 200;
 
     /**
      * @var \Postnl\Ecs\Helper\Config
