@@ -343,7 +343,7 @@ class Order extends Common {
                 $postNLshippingCode = $PostNlOrder->getProductCode();
                 $postNLOrderType = $PostNlOrder->getType();
                 $postnlIsPG = $PostNlOrder->getIsPakjegemak();
-                $shippingCode = $postNLOrderType.'_0'.$postNLshippingCode;
+                $shippingCode = '0'.$postNLshippingCode.'_'.$postNLOrderType;
 
 
                 if($PostNlOrder->getIsStatedAddressOnly())
