@@ -6,7 +6,7 @@
     "magento/magento-composer-installer": "*"
   },
   "type": "magento2-module",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "license": [
     "Private"
   ],

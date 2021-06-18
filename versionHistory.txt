@@ -1,5 +1,21 @@
-Release 0.7.2: - 09-06-2021
+Release 0.7.3: - 09-06-2021
 1. Modify cancellation if all order items have 0 as shipped. Create credit memo and close the order.
+
+Release 0.7.2.2: - 06-05-2021
+1. set order export items per cron run to 200 instead of default 100
+
+Release 0.7.2.1: - 06-05-2021
+1. set order export items per cron run to 150 instead of default 100
+
+Release 0.7.2: - 05-05-2021
+1. undo changes 0.7.1
+2. Remove sanitizing '-' character in cleanupstring function for addresses
+
+Release 0.7.1: - 04-05-2021
+1. Debug version to write order XML to local filesystem
+
+Release 0.7: - 03-05-2021
+1. Export order address in streetHouseNrExt tag of XML
 
 Release 0.7: - 03-05-2021
 1. Export order address in streetHouseNrExt tag of XML

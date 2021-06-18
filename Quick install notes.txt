@@ -4,11 +4,11 @@ Step 1: Request the extension from PostNL
 
 Step 2: Unzip the file in a temporary directory
 
-Step 3: Upload it to your Magento installation root directory
+Step 3: Upload Postnl folder to your Magento installation root/app/code directory
 
-Step 4: Disable the cache under System­ >> Cache Management
+Step 4: Disable the cache under Systemï¿½ >> Cache Management
 
 Step 5: Enter the following at the command line:
 php bin/magento setup:upgrade
 
-Step 6: After opening Stores­ >>Configuration >­>Advanced >­> Advanced, the module will be shown in the admin panel
+Step 6: After opening Storesï¿½ >>Configuration >ï¿½>Advanced >ï¿½> Advanced, the module will be shown in the admin panel

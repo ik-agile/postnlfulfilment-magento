@@ -4,7 +4,7 @@ namespace Postnl\Ecs\Model\Resource;
 
 class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-    
+
     const MAX_ORDERS = 200;
 
     /**
@@ -20,12 +20,12 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $this->ecsConfigHelper = $ecsConfigHelper;
         parent::__construct($context, $connectionName);
     }
-    
+
     public function _construct()
-    {    
+    {
         $this->_init('postnlecs_order', 'order_id');
     }
-    
+
     protected function _getProcessedOrdersSelect()
     {
         $connection      = $this->getConnection();
@@ -43,12 +43,12 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         ;
         return $select;
     }
-    
+
     public function applyUnprocessedFilter($collection)
     {
         $config = $this->ecsConfigHelper;
         $collection->addAttributeToFilter('status', array('in' => $config->getOrderStatus()));
-		//error_log(print_r($config->getOrderMethod(),TRUE));
+        //error_log(print_r($config->getOrderMethod(),TRUE));
         $collection->addAttributeToFilter('shipping_method', array('in' => $config->getOrderMethod()));
         $collection->getSelect()
             ->order('main_table.created_at ASC')
@@ -57,5 +57,5 @@ class Order extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         ;
         return $collection;
     }
-    
+
 }
