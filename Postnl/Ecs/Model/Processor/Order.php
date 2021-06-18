@@ -153,8 +153,8 @@ class Order extends Common {
             ']',
             '!',
             '<',
-            '>',
-            '-',
+            '>'
+
         );
     }
     
@@ -333,20 +333,32 @@ class Order extends Common {
             ''
         ));
         
-		
-
+		$deliveryDate = '';
+        $shippingCode = '';
 		$postNLcheck = $this->_moduleManager->isEnabled('TIG_PostNL');
 		if ($postNLcheck) {
 			
 			$PostNlOrder = $this->_objectManager->create('TIG\PostNL\Model\OrderRepository')->getByOrderId($order->getIncrementId());
 			if($PostNlOrder) {
                 $postNLshippingCode = $PostNlOrder->getProductCode();
-             
-            }
+                $postNLOrderType = $PostNlOrder->getType();
+                $postnlIsPG = $PostNlOrder->getIsPakjegemak();
+                $shippingCode = $postNLOrderType.'_0'.$postNLshippingCode;
+
+
+                if($PostNlOrder->getIsStatedAddressOnly())
+                    $shippingCode = $shippingCode.'_SAO';
+
+
+
+                $deliveryDate = $PostNlOrder->getDeliveryDate() ? date('Y-m-d',strtotime($PostNlOrder->getDeliveryDate())) : '';
+
+
+			}
 			    
 			
 			
-        }
+        }+
        
 		
         $this->_exportAddress($node, $order->getShippingAddress(), 'shipTo');
@@ -360,12 +372,12 @@ class Order extends Common {
         $node->appendChild($xml->createElementNS('http://www.toppak.nl/deliveryorder_new','remboursAmount', 
             ''
         ));
-        
+
         $carrier = $order->getShippingCarrier();
-        $node->appendChild($xml->createElementNS('http://www.toppak.nl/deliveryorder_new','shippingAgentCode', 
-            $carrier ? $carrier->getConfigData('title') : $order->getShippingMethod()
+        $carrierCode = $carrier ? $carrier->getConfigData('title') : $order->getShippingMethod();
+        $node->appendChild($xml->createElementNS('http://www.toppak.nl/deliveryorder_new','shippingAgentCode',
+            empty($shippingCode) ? $carrierCode : $shippingCode
         ));
-		
         
         $node->appendChild($xml->createElementNS('http://www.toppak.nl/deliveryorder_new','shipmentType', 
             ''
@@ -393,7 +405,7 @@ class Order extends Common {
         ));
         
         $node->appendChild($xml->createElementNS('http://www.toppak.nl/deliveryorder_new','requestedDeliveryDate', 
-            ''
+            $deliveryDate
         ));
         $node->appendChild($xml->createElementNS('http://www.toppak.nl/deliveryorder_new','requestedDeliveryTime', 
             ''
@@ -528,6 +540,28 @@ class Order extends Common {
     public function getXml()
     {
         return $this->_xml->saveXml();
+    }
+
+    protected function getPostnlMapCode()
+    {
+
+    }
+
+    protected function shippingCodeMap()
+    {
+        return
+            [
+                'Daytime' => 'Overdag',
+                'Evening' => 'Avond',
+                'Sunday' => 'Sunday',
+                'PG' => 'PG',
+                'PGE' => 'PGE',
+                'EPS' => 'EPS',
+                'GP' => 'GP',
+                'Extra@Home' => 'Extra@Home',
+                'Letterbox Package' => 'Letterbox Package'
+
+            ];
     }
     
 }

@@ -1,3 +1,6 @@
+Release 1.0.0: - 18-06-2021
+1. Magento PostNL Plugin compatibility for shipping code and Delivery Date.
+
 Release 0.7.3: - 09-06-2021
 1. Modify cancellation if all order items have 0 as shipped. Create credit memo and close the order.
 
