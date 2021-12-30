@@ -1,3 +1,11 @@
+Release 1.0.2: - 30-12-2021
+1. TIG PostNL integration fix for multiple store view
+2. Fix different filename issue
+
+
+Release 1.0.1: - 18-06-2021
+1. If tracking number is empty use NA to create shipment.
+
 Release 1.0.0: - 18-06-2021
 1. Magento PostNL Plugin compatibility for shipping code and Delivery Date.
 

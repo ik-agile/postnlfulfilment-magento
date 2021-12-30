@@ -326,11 +326,16 @@ class Shipment extends Common {
 					));*/
                 }
             }
+
+            $trackingCode = (string) $row->getTrackingNumber();
+            if(empty($trackingCode))
+                $trackingCode = 'NA';
+
             $shipment = $this->shipmentFactory->create(
                 $order,
                 $qtys, [[
                     'title' => 'PostNL',
-                    'number' => $row->getTrackingNumber(),
+                    'number' => $trackingCode,
                     'carrier_code' => 'postnl',
                     'order_id' => $order->getId(),
                 ]]

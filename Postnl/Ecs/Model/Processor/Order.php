@@ -337,8 +337,8 @@ class Order extends Common {
         $shippingCode = '';
 		$postNLcheck = $this->_moduleManager->isEnabled('TIG_PostNL');
 		if ($postNLcheck) {
-			
-			$PostNlOrder = $this->_objectManager->create('TIG\PostNL\Model\OrderRepository')->getByOrderId($order->getIncrementId());
+
+			$PostNlOrder = $this->_objectManager->create('TIG\PostNL\Model\OrderRepository')->getByOrderId($order->getId());
 			if($PostNlOrder) {
                 $postNLshippingCode = $PostNlOrder->getProductCode();
                 $postNLOrderType = $PostNlOrder->getType();
@@ -358,7 +358,7 @@ class Order extends Common {
 			    
 			
 			
-        }+
+        }
        
 		
         $this->_exportAddress($node, $order->getShippingAddress(), 'shipTo');
