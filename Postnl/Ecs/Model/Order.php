@@ -27,7 +27,7 @@ class Order extends \Magento\Framework\Model\AbstractModel {
         if ($this->isObjectNew())
         {
             $this->setCreatedAt($now);
-            if(empty($this->getFilename()) && strlen($this->getFilename()) < 8)
+            if(empty($this->getFilename()) || strlen($this->getFilename()) < 8)
                 $this->setFilename(sprintf('ORD%s.xml', preg_replace('#[^0-9]+#', '', $nowFileName)));
         }
         $this->setUpdatedAt($now);
