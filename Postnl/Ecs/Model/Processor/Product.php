@@ -138,12 +138,17 @@ class Product extends Common {
         $node->appendChild($xml->createElementNS("http://www.toppak.nl/item",'description', 
             $this->_cleanupString($productName, 35)
         ));
-        
+
+		$productName2 = substr($productName, 35, strlen($productName));
+        $node->appendChild($xml->createElementNS("http://www.toppak.nl/item",'description2', 
+            $this->_cleanupString($productName2, 36)
+        ));
+/*        
         $productDescription = preg_replace('/[^A-Za-z0-9 .]/u','', strip_tags($product->getShortDescription()));
         $node->appendChild($xml->createElementNS("http://www.toppak.nl/item",'description2', 
             $this->_cleanupString($productDescription, 35)
         ));
-        
+*/        
         $node->appendChild($xml->createElementNS("http://www.toppak.nl/item",'unitOfMeasure', 
             $product->getUnitOfMeasure()
                 ? $this->_cleanupString($product->getUnitOfMeasure(), 10)

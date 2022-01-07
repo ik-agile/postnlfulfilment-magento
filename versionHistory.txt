@@ -1,3 +1,6 @@
+Release 1.0.3: - 07-01-2022
+1. Changed product export description2 field from shortdescription value to productname, split in description and description2 field, each 35 characters.
+
 Release 1.0.2: - 30-12-2021
 1. TIG PostNL integration fix for multiple store view
 2. Fix different filename issue
