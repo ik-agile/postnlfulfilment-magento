@@ -20,6 +20,9 @@ class Shipment extends Common {
         } catch (\Exception $e) {
             $this->_informAdminAboutErrors(array($e));
             return $this;
+        } catch (\Error $e){
+            $this->_informAdminAboutErrors(array($e));
+            return $this;
         }
         
         $errors = array();
@@ -46,6 +49,11 @@ class Shipment extends Common {
                     $file, $e->getMessage()
                 ));
 
+            } catch (\Error $e){
+                $errors[] = new \Postnl\Ecs\Exception(__(
+                    'Error in processing File "%1" Details: ',
+                    $file, $e->getMessage()
+                ));
             }
 
         }
@@ -69,10 +77,12 @@ class Shipment extends Common {
                         }
 
                     } catch (\Postnl\Ecs\Exception $e) {
-                        $success = false;
+
                         $errors[] = $e;
                     } catch (\Exception $e) {
-                        $success = false;
+
+                        $errors[] = $e;
+                    } catch (\Error $e){
                         $errors[] = $e;
                     }
 
@@ -89,6 +99,8 @@ class Shipment extends Common {
                     ));
                 else
                     $errors[] = $e;
+            } catch (\Error $e){
+                $errors[] = $e;
             }
         }
         
@@ -99,6 +111,8 @@ class Shipment extends Common {
         } catch (\Exception $e) {
             $errors[] = $e;
 
+        } catch (\Error $e){
+            $errors[] = $e;
         }
         
         if(!empty($errors))

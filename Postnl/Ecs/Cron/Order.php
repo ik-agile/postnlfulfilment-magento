@@ -78,13 +78,15 @@ class Order extends Common
 				try {
 					$processor->processOrder($order);
 					$processedOrders[] = $order;
-					
+
 				} catch (\Postnl\Ecs\Exception $e) {
 
                     $errors[] = $e;
                 } catch (\Exception $e) {
 					$errors[] = $e;
-				}
+				} catch (\Error $e){
+                    $errors[] = $e;
+                }
 			}
 
 			if(empty($processedOrders))
@@ -96,7 +98,9 @@ class Order extends Common
                 $errors[] = $e;
             }  catch (\Exception $e) {
 				$errors[] = $e;
-			}
+			} catch (\Error $e){
+                $errors[] = $e;
+            }
 			
 			
 			

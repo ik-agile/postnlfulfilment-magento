@@ -495,6 +495,8 @@ class Order extends Common {
 
             throw new \Postnl\Ecs\Exception(__('Error in Order XML %1, Details: %2', $path,$e->getMessage()));
 
+        } catch (\Error $e){
+            throw new \Postnl\Ecs\Exception(__('Error in Order XML %1, Details: %2', $path,$e->getMessage()));
         }
 
 		
