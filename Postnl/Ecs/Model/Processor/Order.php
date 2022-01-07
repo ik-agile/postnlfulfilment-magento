@@ -482,13 +482,21 @@ class Order extends Common {
         //End check XSD
 		
 		//Temp save 
-		$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+		try{
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 
-		$directory = $objectManager->get('\Magento\Framework\Filesystem\DirectoryList');
-		
-		$tmpPath = $directory->getPath('tmp'); 
-		
-		file_put_contents($tmpPath.'/'.$this->_file->getFilename(),$this->_xml->saveXml());
+            $directory = $objectManager->get('\Magento\Framework\Filesystem\DirectoryList');
+
+            $tmpPath = $directory->getPath('tmp');
+
+            file_put_contents($tmpPath.'/'.$this->_file->getFilename(),$this->_xml->saveXml());
+
+        } catch (\Exception $e){
+
+            throw new \Postnl\Ecs\Exception(__('Error in Order XML %1, Details: %2', $path,$e->getMessage()));
+
+        }
+
 		
 		//
         if (empty($path))

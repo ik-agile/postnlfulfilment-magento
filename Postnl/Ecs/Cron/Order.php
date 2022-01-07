@@ -59,7 +59,13 @@ class Order extends Common
 				$processor = $this->objectManager->create('Postnl\Ecs\Model\Processor\Order', ['sftp' => $server]);
 				$processor->startProcessing();
 				
-			} catch (\Exception $e) {
+			}  catch (\Postnl\Ecs\Exception $e) {
+
+                $this->_informAdminAboutErrors([$e]);
+
+                return $this;
+            }
+			catch (\Exception $e) {
 				
 				$this->_informAdminAboutErrors([$e]);
 				
@@ -67,18 +73,28 @@ class Order extends Common
 			}
 			
 			
-			
+			$processedOrders = [];
 			foreach ($ordersArray as $order) {
 				try {
 					$processor->processOrder($order);
-				} catch (\Exception $e) {
+					$processedOrders[] = $order;
+					
+				} catch (\Postnl\Ecs\Exception $e) {
+
+                    $errors[] = $e;
+                } catch (\Exception $e) {
 					$errors[] = $e;
 				}
 			}
-			
+
+			if(empty($processedOrders))
+			    continue;
 			try {
 				$processor->completeProcessing();
-			} catch (\Exception $e) {
+			} catch (\Postnl\Ecs\Exception $e) {
+
+                $errors[] = $e;
+            }  catch (\Exception $e) {
 				$errors[] = $e;
 			}
 			

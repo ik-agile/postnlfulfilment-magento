@@ -13,6 +13,10 @@ class Shipment extends Common {
             $server = $this->ecsHelper->getServerInstance();
             $processor = $this->objectManager->create('Postnl\Ecs\Model\Processor\Shipment', ['sftp' => $server]);
             list($files, $skipped) = $processor->getFiles();
+        } catch (\Postnl\Ecs\Exception $e) {
+            $this->_informAdminAboutErrors(array($e));
+            return $this;
+
         } catch (\Exception $e) {
             $this->_informAdminAboutErrors(array($e));
             return $this;
@@ -21,12 +25,29 @@ class Shipment extends Common {
         $errors = array();
         
         foreach ($skipped as $file) {
-            $errors[] = new \Postnl\Ecs\Exception(__(
-                'File "%1" was already processed.', 
-                $file
-            ));
-            list($file, $rows) = $processor->parseFile($file);
-            $processor->completeFile($file, [], [], []);
+            try{
+
+                $errors[] = new \Postnl\Ecs\Exception(__(
+                    'File "%1" was already processed.',
+                    $file
+                ));
+                list($file, $rows) = $processor->parseFile($file);
+                $processor->completeFile($file, [], [], []);
+
+            } catch (\Postnl\Ecs\Exception $e) {
+                $errors[] = new \Postnl\Ecs\Exception(__(
+                    'Error in processing File "%1" Details: ',
+                    $file, $e->getMessage()
+                ));
+
+            } catch (\Exception $e) {
+                $errors[] = new \Postnl\Ecs\Exception(__(
+                    'Error in processing File "%1" Details: ',
+                    $file, $e->getMessage()
+                ));
+
+            }
+
         }
             
         
@@ -36,19 +57,27 @@ class Shipment extends Common {
                 list($file, $rows) = $processor->parseFile($file);
                 $orders = array();
                 $shipments = array();
-                $success = true;
+                $processedRows = [];
                 foreach ($rows as $row)
                     try {
                         list($order, $shipment) = $processor->processRow($row);
-                        $orders[$order->getId()] = $order;
-						if($shipment) 
-							$shipments[] = $shipment;
+
+						if($shipment) {
+                            $orders[$order->getId()] = $order;
+						    $shipments[] = $shipment;
+                            $processedRows[] = $row;
+                        }
+
                     } catch (\Postnl\Ecs\Exception $e) {
                         $success = false;
                         $errors[] = $e;
+                    } catch (\Exception $e) {
+                        $success = false;
+                        $errors[] = $e;
                     }
-                if ($success)
-                    $processor->completeFile($file, $rows, $orders, $shipments);
+
+                if (!empty($shipments))
+                    $processor->completeFile($file, $processedRows, $orders, $shipments);
             } catch (\Postnl\Ecs\Exception $e) {
                 $errors[] = $e;
             } catch (\Exception $e) {
@@ -65,12 +94,15 @@ class Shipment extends Common {
         
         try {
             $processor->restorePath();
+        } catch (\Postnl\Ecs\Exception $e) {
+            $errors[] = $e;
         } catch (\Exception $e) {
             $errors[] = $e;
-            return $this;
+
         }
         
-        $this->_informAdminAboutErrors($errors);
+        if(!empty($errors))
+            $this->_informAdminAboutErrors($errors);
         
         return $this;
     }
