@@ -70,7 +70,12 @@ class Order extends Common
 				$this->_informAdminAboutErrors([$e]);
 				
 				return $this;
-			}
+			} catch (\Error $e)
+            {
+                $this->_informAdminAboutErrors([$e]);
+
+                return $this;
+            }
 			
 			
 			$processedOrders = [];

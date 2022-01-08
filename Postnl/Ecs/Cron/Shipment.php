@@ -65,14 +65,18 @@ class Shipment extends Common {
                 list($file, $rows) = $processor->parseFile($file);
                 $orders = array();
                 $shipments = array();
+                $emptyShipments = [];
                 $processedRows = [];
                 foreach ($rows as $row)
                     try {
                         list($order, $shipment) = $processor->processRow($row);
 
-						if($shipment) {
+                        if($shipment || is_null($shipment)) {
                             $orders[$order->getId()] = $order;
-						    $shipments[] = $shipment;
+                            if(!is_null($shipment))
+                                $shipments[] = $shipment;
+                            else
+                                $emptyShipments[] = $order;
                             $processedRows[] = $row;
                         }
 
@@ -86,7 +90,7 @@ class Shipment extends Common {
                         $errors[] = $e;
                     }
 
-                if (!empty($shipments))
+                if (!empty($shipments) || !empty($emptyShipments))
                     $processor->completeFile($file, $processedRows, $orders, $shipments);
             } catch (\Postnl\Ecs\Exception $e) {
                 $errors[] = $e;
