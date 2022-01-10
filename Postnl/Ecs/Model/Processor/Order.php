@@ -110,7 +110,7 @@ class Order extends Common {
     
     protected function _createXml()
     {
-        $xml = new \DOMDocument('1.0');
+        $xml = new \DOMDocument('1.0', 'UTF-8');
 	
         $message = $xml->createElementNS('http://www.toppak.nl/deliveryorder_new','message');
         
@@ -507,9 +507,20 @@ class Order extends Common {
         $result = $this->_server->cd($path);
         if ( ! $result)
             throw new \Postnl\Ecs\Exception(__('Folder "%1" is missing', $path));
-        
-        if ( ! $this->_server->write($this->_file->getFilename(), $this->_xml->saveXml()))
-            throw new \Postnl\Ecs\Exception(__('Can not write orders file', $path));
+
+
+        try{
+            if ( ! $this->_server->write($this->_file->getFilename(), $this->_xml->saveXml()))
+                throw new \Postnl\Ecs\Exception(__('Can not write orders file', $path));
+        } catch (\Exception $e){
+
+            throw new \Postnl\Ecs\Exception(__('Error in sending Order XML %1, Details: %2', $path,$e->getMessage()));
+
+        } catch (\Error $e){
+            throw new \Postnl\Ecs\Exception(__('Error in process sending Order XML %1, Details: %2', $path,$e->getMessage()));
+        }
+
+
         
         $this->restorePath();
     }

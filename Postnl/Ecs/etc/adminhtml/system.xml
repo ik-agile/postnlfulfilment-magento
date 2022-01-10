@@ -86,11 +86,11 @@
                     <label>Path</label>
                     <comment>For example, /magento/orders</comment>
                 </field>
-				<field id="ordersfile" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
+				<!--<field id="ordersfile" translate="label comment" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="20">
                     <label>Max Orders in file</label>
                     <comment>For example, 1</comment>
 					<validate>validate-number</validate>
-                </field>
+                </field>-->
                 <field id="status" translate="label comment" type="multiselect" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="30">
                     <label>Order Status</label>
                     <comment>Only orders with selected status(es) will be exported</comment>
