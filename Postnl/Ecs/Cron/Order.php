@@ -19,8 +19,8 @@ class Order extends Common
         }
 		
 		
-        //$ordersPerFile = $this->getOrdersPerFile();
-		$ordersPerFile = 1;
+        $ordersPerFile = $this->getOrdersPerFile();
+		//$ordersPerFile = 1;
 		$ordersChunk = [];
 		$chunkPartArray = [];
 		

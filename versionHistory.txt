@@ -1,3 +1,6 @@
+Release 1.0.5: - 17-01-2022
+1. Enable order per file system configuration
+
 Release 1.0.4: - 10-01-2022
 1. Add additional error handling for file parsing in Shipment import.
 2. Add additional error handling on saving XML of order
