@@ -37,14 +37,17 @@ class Stock extends Common {
                 $stocks = array();
                 $success = true;
                 foreach ($rows as $row)
+                {
                     try {
                         $stocks = array_merge($stocks, $processor->processRow($row));
                     } catch (\Postnl\Ecs\Exception $e) {
                         $errors[] = $e;
                         $success = false;
                     }
-                if ($success)
-                    $processor->completeFile($file, $rows, $stocks);
+                }
+
+
+                $processor->completeFile($file, $rows, $stocks);
             } catch (\Postnl\Ecs\Exception $e) {
                 $errors[] = $e;
             } catch (\Exception $e) {

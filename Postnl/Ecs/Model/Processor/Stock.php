@@ -167,24 +167,33 @@ class Stock extends Common {
         foreach ($products as $product)
         {
             $map[$product->getId()] = $product->getSku();
-            $result[$product->getSku()]->setProduct($product);
+            //$result[$product->getSku()]->setProduct($product->getId());
             $result[$product->getSku()]->setEntityId($product->getId());
         }
        
 		
         $stocks = $this->catalogInventoryStockItemFactory->create();
         $stocks->addFieldToFilter('product_id', array('in' => array_keys($map)));
-		
-		
+
+        $transaction = $this->transactionFactory->create();
+        $saveTransaction = false;
         foreach ($stocks as $stock)
         {
             if ( ! isset($map[$stock->getProductId()]))
                 continue;
             $existing = $result[$map[$stock->getProductId()]]->getStocks();
-            $existing[] = $stock;
+            $existing[] = $stock->getProductId();
             $result[$map[$stock->getProductId()]]->setStocks($existing);
+            $stockQty = $result[$map[$stock->getProductId()]]->getQty();
+            $stock->setProcessIndexEvents(false);
+            $stock->setQty($stockQty);
+            $transaction->addObject($stock);
+            $saveTransaction = true;
+
         }
-		
+
+        if($saveTransaction)
+            $transaction->save();
 		
         return $result;
     }
@@ -207,9 +216,9 @@ class Stock extends Common {
     {
         $stocks = [];
         try {
-            $product = $row->getProduct();
+            $product = $row->getEntityId();
 			
-            if ( ! $product || ! $product->getId()) {
+            if ( ! $product && !empty($product)) {
               /*  throw new \Postnl\Ecs\Exception(__(
                     'Unknown SKU "%1" in file "%2"', 
                     $row->getProductId(),
@@ -227,14 +236,14 @@ class Stock extends Common {
                     $row->getFile()->getFilename()
                 ));
 				
-            foreach ($row->getStocks() as $stock)
+            /*foreach ($row->getStocks() as $stock)
             {
                 $stock->setProcessIndexEvents(false);
                 $stock->setQty($row->getQty());
-            }
+            }*/
                 
             $row->setStatus(\Postnl\Ecs\Model\Stock\Row::STATUS_PROCESSED);
-            $stocks[] = $stock;
+            $stocks[] = $product;
         } catch (Postnl_Ecs_Exception $e) {
             $row->setStatus(\Postnl\Ecs\Model\Stock\row::STATUS_ERROR);
             throw $e;
@@ -256,8 +265,8 @@ class Stock extends Common {
         $transaction->addObject($file);
         foreach ($rows as $row)
             $transaction->addObject($row);
-        foreach ($stocks as $stock)
-            $transaction->addObject($stock);
+        //foreach ($stocks as $stock)
+          //  $transaction->addObject($stock);
         $transaction->save();
         $indexer = $this->indexerFactory->create();
         $indexer->load('cataloginventory_stock');

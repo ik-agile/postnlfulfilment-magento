@@ -90,7 +90,7 @@ class Shipment extends Common {
                         $errors[] = $e;
                     }
 
-                if (!empty($shipments) || !empty($emptyShipments))
+            if (!empty($shipments) || !empty($emptyShipments))
                     $processor->completeFile($file, $processedRows, $orders, $shipments);
             } catch (\Postnl\Ecs\Exception $e) {
                 $errors[] = $e;
