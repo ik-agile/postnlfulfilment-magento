@@ -29,38 +29,84 @@ class Stock extends Common {
             $processor->completeFile($file, $rows, []);
         }
            
-        
+        $fileRemoved = false;
         foreach ($files as $file)
         {
             try {
                 list($file, $rows) = $processor->parseFile($file);
                 $stocks = array();
-                $success = true;
+
                 foreach ($rows as $row)
                 {
                     try {
                         $stocks = array_merge($stocks, $processor->processRow($row));
                     } catch (\Postnl\Ecs\Exception $e) {
                         $errors[] = $e;
-                        $success = false;
+
+                    }
+                    catch (\Exception $e)
+                    {
+                        $errors[] = $e;
+
+
+                    }
+                    catch (\Error $e)
+                    {
+                        $errors[] = $e;
+
+
                     }
                 }
 
 
                 $processor->completeFile($file, $rows, $stocks);
+                $fileRemoved = true;
             } catch (\Postnl\Ecs\Exception $e) {
                 $errors[] = $e;
+
             } catch (\Exception $e) {
-                throw $e;
+                //throw $e;
                 if (is_object($file))
                     $errors[] = new \Postnl\Ecs\Exception(__(
-                        'File "%1": %2', 
+                        'File "%1": %2',
                         $file->getFilename(),
                         $e->getMessage()
                     ));
                 else
                     $errors[] = $e;
             }
+            catch (\Error $e)
+            {
+                if (is_object($file))
+                    $errors[] = new \Postnl\Ecs\Exception(__(
+                        'File "%1": %2',
+                        $file->getFilename(),
+                        $e->getMessage()
+                    ));
+                else
+                    $errors[] = $e;
+
+
+            }
+
+            if(!$fileRemoved)
+            {
+                try{
+                    if(is_string($file))
+                        $processor->removeFile($file);
+                    else{
+                        $processor->removeFile($file->getFilename());
+                    }
+                } catch (\Postnl\Ecs\Exception $e)
+                {
+
+                    $errors[] = $e;
+
+                }
+
+            }
+
+
         }
         
         try {

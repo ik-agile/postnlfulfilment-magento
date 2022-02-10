@@ -1,3 +1,7 @@
+Release 1.0.7: - 10-02-2022
+1. Additional error handling for stock update on SKU mismatch
+2. Remove files also in case of errors from SFTP.
+
 Release 1.0.6: - 09-02-2022
 1. Optimize stock update
 

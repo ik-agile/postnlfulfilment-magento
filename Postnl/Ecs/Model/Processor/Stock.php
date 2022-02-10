@@ -166,9 +166,13 @@ class Stock extends Common {
         $map = array();
         foreach ($products as $product)
         {
-            $map[$product->getId()] = $product->getSku();
-            //$result[$product->getSku()]->setProduct($product->getId());
-            $result[$product->getSku()]->setEntityId($product->getId());
+            if(isset($result[$product->getSku()]))
+            {
+                $map[$product->getId()] = $product->getSku();
+                //$result[$product->getSku()]->setProduct($product->getId());
+                $result[$product->getSku()]->setEntityId($product->getId());
+            }
+
         }
        
 		
@@ -276,6 +280,17 @@ class Stock extends Common {
         $result = $this->_server->rm($this->_server->pwd() . '/' . $filename);
         if ( ! $result)
             throw new \Postnl\Ecs\Exception(__('Can not remove file "%1"', $filename));
+    }
+
+    public function removeFile($filename)
+    {
+        $file = $this->_getFile($filename);
+        $file->setStatus(\Postnl\Ecs\Model\Stock::STATUS_ERROR);
+
+        $result = $this->_server->rm($this->_server->pwd() . '/' . $filename);
+        if ( ! $result)
+            throw new \Postnl\Ecs\Exception(__('Can not remove file "%1"', $filename));
+
     }
     
 }
