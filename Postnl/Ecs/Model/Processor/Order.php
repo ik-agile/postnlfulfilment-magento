@@ -5,7 +5,10 @@ class Order extends Common {
     
     protected $_xml;
     protected $_ordersNode;
-    
+
+    protected $_validateXml;
+    protected $_validateOrderNode;
+
     protected $_file;
     
     protected $_rows;
@@ -124,9 +127,13 @@ class Order extends Common {
         
         $orders = $xml->createElementNS('http://www.toppak.nl/deliveryorder_new','deliveryOrders');
         $message->appendChild($orders);
-        
+
+        $this->_validateXml = $xml;
+        $this->_validateOrderNode = $orders;
+
         $this->_xml = $xml;
         $this->_ordersNode = $orders;
+
     }
     
     public function startProcessing()
@@ -427,7 +434,33 @@ class Order extends Common {
         $row->setOrderId($this->_file->getId());
         $row->setEntityId($order->getId());
 
-        $this->_ordersNode->appendChild($this->_processOrder($order));
+        $orderData = $this->_processOrder($order);
+
+        //CHECK XML
+
+        $xml = $this->_validateXml;
+        $orderNode = $this->_validateOrderNode;
+
+        $orderNode->appendChild($orderData);
+
+        try {
+            $xml->saveXml();
+        } catch (\Exception $e)
+        {
+            throw  new \Postnl\Ecs\Exception('Invalid Order Data '.$order->getIncrementId().' '.$e->getMessage());
+        } catch (\Error $e)
+        {
+            throw  new \Postnl\Ecs\Exception('Invalid Order Data'.$order->getIncrementId().' '.$e->getMessage());
+        }
+
+
+
+
+
+        //END CHECK
+
+
+        $this->_ordersNode->appendChild($orderData);
        
         $this->_rows[] = $row;
     }
